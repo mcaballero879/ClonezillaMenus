@@ -1,0 +1,100 @@
+# Created by generate-pxe-menu! Do NOT edit unless you know what you are doing!
+# Keep those comment "MENU DEFAULT" and "MENU HIDE"! Do NOT remove them.
+# Note!!! If "serial" directive exists, it must be the first directive
+
+default vesamenu.c32
+timeout 70
+prompt 0
+noescape 1
+MENU MARGIN 5
+MENU BACKGROUND drblwp.png
+# Set the color for unselected menu item and timout message
+MENU COLOR UNSEL 7;32;41 #c0000090 #00000000
+MENU COLOR TIMEOUT_MSG 7;32;41 #c0000090 #00000000
+MENU COLOR TIMEOUT 7;32;41 #c0000090 #00000000
+MENU COLOR HELP 7;32;41 #c0000090 #00000000
+
+# MENU MASTER PASSWD
+
+say **********************************************
+say Welcome to DRBL.
+say NCHC Free Software Labs, Taiwan.
+say http://drbl.org; http://drbl.nchc.org.tw
+say **********************************************
+
+# Allow client to edit boot parameters
+ALLOWOPTIONS 1
+
+# Set PATH to bios/ or efi64/, which is relative to PXE root dir (/tftpboot/nbi_img/pxelinux.cfg).
+# bios is for legacy PXE booting, while efi64 is for uEFI network booting.
+# This might be improved in syslinux 7.0 using auto detection.
+# For more info, please check:
+# http://www.syslinux.org/archives/2014-April/thread.html#21974
+#PATH efi64/
+PATH bios/
+
+# simple menu title
+MENU TITLE Bienvenido al servidor de imagenes
+
+
+
+label clonezilla
+  # MENU DEFAULT
+  MENU HIDE
+  MENU LABEL Clonezilla
+  # MENU PASSWD
+  # Append DHCP/BOOTP to the kernel command line, i.e., ip=<client-ip>:<boot-server-ip>:<gw-ip>:<netmask>
+  # We need this when using proxy DHCP
+  IPAPPEND 1
+  kernel vmlinuz-pxe
+  append initrd=initrd-pxe.img devfs=nomount drblthincli=off selinux=0 quiet text 1 edd=on   
+  TEXT HELP
+  * Servidor de imagenes version: 2021 
+  * mcaballero
+  ENDTEXT
+
+label local
+  # MENU DEFAULT
+  # MENU HIDE
+  MENU LABEL Desde sistema operativo local (Si esta disponible)
+  # MENU PASSWD
+  # 2 method to boot local device:
+  # (1) For localboot 0, it is decided by boot order in BIOS, so uncomment the follow 1 line if you want this method:
+  # localboot 0
+
+  # (2) For chain.c32, you can assign the boot device.
+  # Ref: extlinux.doc from syslinux
+  # Syntax: APPEND [hd|fd]<number> [<partition>]
+  # [<partition>] is optional.
+  # Ex:
+  # Second partition (2) on the first hard disk (hd0);
+  # Linux would *typically* call this /dev/hda2 or /dev/sda2, then it's "APPEND hd0 2"
+  #
+  kernel chain.c32
+  append hd0
+  TEXT HELP
+  Boot local OS from first hard disk if it's available
+  ENDTEXT
+
+# ref: http://syslinux.zytor.com/memdisk.php
+label fdos
+  # MENU DEFAULT
+  MENU HIDE
+  MENU LABEL FreeDOS
+  # MENU PASSWD
+  kernel memdisk
+  append initrd=fdos1440_drbl.img
+  TEXT HELP
+  Run FreeDOS
+  ENDTEXT
+
+
+
+
+
+
+
+#  TEXT HELP
+#  Boot GParted live via network
+#  ENDTEXT
+
